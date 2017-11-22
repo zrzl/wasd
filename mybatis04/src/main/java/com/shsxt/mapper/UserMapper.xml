@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.shsxt.mapper.UserMapper">
+   <!-- 
+      namespace:命名空间配置
+                  全局唯一  规则
+              通过包名+文件名       
+    -->
+    
+    <!-- 
+       mappered statement
+           1.标签体  sql   crud (select insert update delete)
+           2.入参
+           3.结果类型指定
+     -->
+     
+     <select id="queryUserById" parameterType="int" resultType="user">
+         select id,user_name as userName,user_pwd as userPwd 
+         from user where id=#{id}
+     </select>
+     
+    <select id="queryUserByUserName" parameterType="string" resultType="user">
+          select id,user_name as userName,user_pwd as userPwd
+          from user where  user_name =#{userName}
+     </select>
+	
+	<select id="queryUserCount" resultType="int">
+		select count(1) from user
+	
+	</select>
+		
+	<insert id="saveUser"  parameterType="user">
+		insert into user(user_name,user_pwd)
+		values(#{userName},#{userPwd})
+	</insert>
+	
+	<insert id="saveUserHasKey" parameterType="user">
+          <selectKey keyProperty="id" order="AFTER" resultType="int">
+               select LAST_INSERT_ID() as id
+          </selectKey>
+          insert into user(user_name,user_pwd) values(#{userName},#{userPwd})
+        </insert>
+	
+	 <insert id="saveUserHasKey02" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+             insert into user(user_name,user_pwd) values(#{userName},#{userPwd})
+         </insert>
+	
+	<insert id="saveUserBatch" parameterType="list">
+             insert into user(user_name,user_pwd) values 
+             <!-- 
+                                 集合遍历标签
+                  foreach
+                    collection:值类型  list |array
+              -->
+              <foreach collection="list" item="item"  separator=","  >
+                 (#{item.userName},#{item.userPwd})
+              </foreach>
+         
+         </insert>
+	
+</mapper>
